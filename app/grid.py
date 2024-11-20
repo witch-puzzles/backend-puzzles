@@ -5,26 +5,28 @@ import random
 
 class Grid:
     array: numpy.ndarray
+    block_size: int
+    grid_size: int
 
     """
     Contains functions to manipulate a Sudoku grid.
     A cells value is either zero (which means it is empty), or between 1-self.grid_size.
     """
 
-    def __init__(self) -> typing.Self:
+    def __init__(self, block_size=3) -> typing.Self:
         """
         Generate an empty grid.
         """
 
-        self.block_size = 3
+        self.block_size = block_size
         self.grid_size = self.block_size * self.block_size
-        self.array = numpy.zeros((self.grid_size, self.grid_size), dtype='int8')
+        self.array = numpy.zeros((self.grid_size, self.grid_size), dtype='uint8')
 
     # -- Static methods --
     @staticmethod
-    def generate_simple(block_size: int) -> typing.Self:
+    def generate_filled(block_size: int = 3) -> typing.Self:
         """
-        Generate a simple solved grid.
+        Generate a filled valid grid.
         Can be used to generate shuffled grids or test functions.
         """
 
@@ -33,25 +35,54 @@ class Grid:
         numbers = list(range(grid_size))
         random.shuffle(numbers)
 
-        grid = Grid()
+        grid = Grid(block_size)
         for row_no in range(grid_size):
             for col_no in range(grid_size):
                 grid.array[row_no, col_no] = numbers[(block_size * row_no + row_no // block_size + col_no) % grid_size] + 1
 
         return grid
 
-    # -- ~Magic~ methods --
+    @staticmethod
+    def generate_non_unique_puzzle(block_size: int = 3, empty: int = 40) -> typing.Self:
+        """
+        Generate an unsolved grid that may or may not have a unique solution.
+        EMPTY determines how many empty squares should the grid have.
+        """
+
+        grid = Grid.generate_filled(block_size)
+
+        # Generate all available squares.
+        squares = [(row_no, col_no) for row_no in range(grid.grid_size) for col_no in range(grid.grid_size)]
+        random.shuffle(squares)
+
+        # Select the first EMPTY items of the squares list and clear the squares.
+        for square in squares[:empty]:
+            grid.array[square] = 0
+
+        return grid
+
+    @staticmethod
+    def generate_unique_puzzle(block_size: int = 3) -> typing.Self:
+        """
+        Generate an unsolved grid that has a single unique solution.
+        """
+
+        grid = Grid.generate_filled(block_size)
+
+    # -- ~*~Magic~*~ methods --
     def __repr__(self) -> str:
-        characters = ' 123456789ABCDEFG'
+        characters = ' 123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
 
         result = '+' + ('-' * self.block_size + '+') * self.block_size
 
         for row_block_no in range(self.block_size):
             result += '\n'
-            for row_no in range(row_block_no * self.block_size, row_block_no * self.block_size + self.block_size):
+            for row_no in range(row_block_no * self.block_size,
+                                row_block_no * self.block_size + self.block_size):
                 result += '|'
                 for col_block_no in range(self.block_size):
-                    for col_no in range(col_block_no * self.block_size, col_block_no * self.block_size + self.block_size):
+                    for col_no in range(col_block_no * self.block_size,
+                                        col_block_no * self.block_size + self.block_size):
                         result += characters[self.array[row_no, col_no]]
 
                     result += '|'
@@ -97,19 +128,19 @@ class Grid:
                 return False
 
         # Check for the values in the block.
-        for new_row_no in range(row_no // self.block_size * self.block_size, row_no // self.block_size * self.block_size + self.block_size):
-            for new_col_no in range(col_no // self.block_size * self.block_size, col_no // self.block_size * self.block_size + self.block_size):
+        for new_row_no in range(row_no // self.block_size * self.block_size,
+                                row_no // self.block_size * self.block_size + self.block_size):
+            for new_col_no in range(col_no // self.block_size * self.block_size,
+                                    col_no // self.block_size * self.block_size + self.block_size):
                 if self.array[new_row_no][new_col_no] == number:
                     return False
 
         # All checks succeded.
         return True
 
-
-    def _try_solve_square(self, i: int, squares: list) -> bool:
+    def _try_solve_square(self, i: int, squares: list) -> int:
         """
         Tries to solve a grid using backtracking.
-        Should be called from the solve method.
         """
 
         square = squares[i]
@@ -232,10 +263,12 @@ class Grid:
                    for col_no in range(self.grid_size)
                    if self.array[row_no, col_no] == 0]
 
-        self._try_solve_square(0, squares)
+        return self._try_solve_square(0, squares)
 
 
-grid = Grid.generate_simple(3)
-grid.shuffle()
+grid = Grid()
+print(grid)
+print(grid.is_solved())
+print(grid.try_solve())
 print(grid)
 print(grid.is_solved())
