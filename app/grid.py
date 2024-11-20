@@ -65,6 +65,8 @@ class Grid:
     def generate_unique_puzzle(block_size: int = 3) -> typing.Self:
         """
         Generate an unsolved grid that has a single unique solution.
+
+        TODO: Actually implement this function. :(
         """
 
         grid = Grid.generate_filled(block_size)
@@ -204,10 +206,11 @@ class Grid:
                 new_col_no = chosen_one * self.block_size + i
                 self._swap_cols(col_no, new_col_no)
 
-    def is_solved(self) -> None:
+    def is_solved(self, only_valid=False) -> None:
         """
         Checks if the grid is solved, aka if every cells has a number and the
         arrangement of the numbers does not break the regular Sudoku rules.
+        If ONLY_VALID is True, does not check for the empty squares.
         """
 
         # Check for the rows.
@@ -216,7 +219,7 @@ class Grid:
             for col_no in range(self.grid_size):
                 number = self.array[row_no][col_no]
 
-                if number == 0 or number in seen:
+                if (not only_valid and number == 0) or number in seen:
                     return False
 
                 seen.add(number)
@@ -227,7 +230,7 @@ class Grid:
             for row_no in range(self.grid_size):
                 number = self.array[row_no][col_no]
 
-                if number == 0 or number in seen:
+                if (not only_valid and number == 0) or number in seen:
                     return False
 
                 seen.add(number)
@@ -240,7 +243,7 @@ class Grid:
                     for col_no in range(col_block_no * self.block_size, col_block_no * self.block_size + self.block_size):
                         number = self.array[row_no][col_no]
 
-                        if number == 0 or number in seen:
+                        if (not only_valid and number == 0) or number in seen:
                             return False
 
                         seen.add(number)
@@ -257,6 +260,10 @@ class Grid:
               each square as this would improve the performance quite a lot.
         """
 
+        # Check if the grid is valid.
+        if not self.is_solved(True):
+            return False
+
         # Get a list of empty squares.
         squares = [(row_no, col_no)
                    for row_no in range(self.grid_size)
@@ -266,9 +273,12 @@ class Grid:
         return self._try_solve_square(0, squares)
 
 
-grid = Grid()
+grid = Grid.generate_non_unique_puzzle(3, 30)
 print(grid)
-print(grid.is_solved())
+print(grid.is_solved(True))
+grid.array[0][0] = 1
+print(grid)
+print(grid.is_solved(True))
 print(grid.try_solve())
 print(grid)
-print(grid.is_solved())
+print(grid.is_solved(True))
