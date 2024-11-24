@@ -1,4 +1,5 @@
 REQUIREMENTS_FILE := 'requirements.txt'
+TEST_REQUIREMENTS_FILE := 'test-requirements.txt'
 
 .PHONY: init freeze dev start
 
@@ -8,6 +9,14 @@ init:
 
 freeze:
 	pip freeze > $(REQUIREMENTS_FILE)
+
+
+test-init:
+	pip install -r $(TEST_REQUIREMENTS_FILE)
+
+
+freeze-test:
+	pip freeze > $(TEST_REQUIREMENTS_FILE)
 
 
 dev:
