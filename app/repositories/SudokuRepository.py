@@ -36,3 +36,6 @@ class SudokuRepository:
   def delete_sudoku(self, sudoku: Sudoku) -> None:
     self.db.delete(sudoku)
     self.db.commit()
+
+def get_sudoku_repository(db: Session) -> SudokuRepository:
+  return SudokuRepository(db)
