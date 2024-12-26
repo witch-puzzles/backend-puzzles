@@ -11,5 +11,5 @@ class Sudoku(Base):
   created_at = Column(DateTime, default=datetime.now())
 
   __table_args__ = (
-    UniqueConstraint('puzzle_data')
+    UniqueConstraint('puzzle_data'),
   )
