@@ -1,2 +1,3 @@
-from .user import UserRepository
-from .sudoku import SudokuRepository, SudokuEntryRepository
+from .UserRepository import UserRepository
+from .SudokuRepository import SudokuRepository
+from .SudokuEntryRepository import SudokuEntryRepository
