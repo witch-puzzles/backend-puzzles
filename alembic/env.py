@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from app.core.database import Base
+from app.entities import User, Sudoku, SudokuRegistry
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
