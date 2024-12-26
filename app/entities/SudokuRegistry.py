@@ -2,7 +2,7 @@ from sqlalchemy import Column, UniqueConstraint, UUID, DateTime, Float, Boolean
 from app.core.database import Base
 from datetime import datetime
 
-class PuzzleRegistry(Base):
+class SudokuRegistry(Base):
   __tablename__ = "sudoku_registry"
 
   id = Column(UUID, primary_key=True, index=True)
