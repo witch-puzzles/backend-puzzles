@@ -7,10 +7,8 @@ class User(Base):
 
   id = Column(UUID, primary_key=True, index=True)
   firebase_id = Column(String, nullable=False)
-  email = Column(String, nullable=False)
   created_at = Column(DateTime, default=datetime.now())
 
   __table_args__ = (
     UniqueConstraint('firebase_id'),
-    UniqueConstraint('email'),
   )
