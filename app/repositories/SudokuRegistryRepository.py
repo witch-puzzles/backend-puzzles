@@ -4,6 +4,7 @@ SudokuEntriesRepository.py is a class that contains all the methods that are use
 
 from sqlalchemy.orm import Session
 from typing import Optional, List
+from uuid import UUID
 
 from app.entities.User import User
 from app.entities.Sudoku import Sudoku
@@ -13,7 +14,7 @@ class SudokuRegistryRepository:
   def __init__(self, db: Session):
     self.db = db
 
-  def create_sudoku_entry(self, user_id: str, sudoku_id: str, solving_time: float, is_applicable: bool) -> SudokuRegistry:
+  def create_sudoku_entry(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> SudokuRegistry:
     sudoku_registry = SudokuRegistry(user_id=user_id, sudoku_id=sudoku_id, solving_time=solving_time, is_applicable=is_applicable)
     self.db.add(sudoku_registry)
     self.db.commit()
@@ -26,13 +27,13 @@ class SudokuRegistryRepository:
     self.db.refresh(sudoku_registry)
     return sudoku_registry
 
-  def get_sudoku_registry_by_id(self, sudoku_registry_id: str) -> Optional[SudokuRegistry]:
+  def get_sudoku_registry_by_id(self, sudoku_registry_id: UUID) -> Optional[SudokuRegistry]:
     return self.db.query(SudokuRegistry).filter(SudokuRegistry.id == sudoku_registry_id).first()
 
-  def get_sudoku_registries_by_user_id(self, user_id: str) -> List[SudokuRegistry]:
+  def get_sudoku_registries_by_user_id(self, user_id: UUID) -> List[SudokuRegistry]:
     return self.db.query(SudokuRegistry).filter(SudokuRegistry.user_id == user_id).all()
 
-  def get_sudoku_registries_by_sudoku_id(self, sudoku_id: str) -> List[SudokuRegistry]:
+  def get_sudoku_registries_by_sudoku_id(self, sudoku_id: UUID) -> List[SudokuRegistry]:
     return self.db.query(SudokuRegistry).filter(SudokuRegistry.sudoku_id == sudoku_id).all()
 
   def delete_sudoku_registry(self, sudoku_registry: SudokuRegistry) -> None:

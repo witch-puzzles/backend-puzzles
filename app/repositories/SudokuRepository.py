@@ -5,6 +5,7 @@ SudokuRepository.py is a class that contains all the methods that are used to in
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 from typing import Optional
+from uuid import UUID
 
 from app.entities.User import User
 from app.entities.Sudoku import Sudoku
@@ -27,7 +28,7 @@ class SudokuRepository:
     self.db.refresh(sudoku)
     return sudoku
 
-  def get_sudoku_by_id(self, sudoku_id: str) -> Optional[Sudoku]:
+  def get_sudoku_by_id(self, sudoku_id: UUID) -> Optional[Sudoku]:
     return self.db.query(Sudoku).filter(Sudoku.id == sudoku_id).first()
 
   def get_random_sudoku_by_difficulty(self, difficulty: int) -> Optional[Sudoku]:

@@ -7,6 +7,7 @@ from typing import Optional
 from app.entities.User import User
 from app.entities.Sudoku import Sudoku
 from app.entities.SudokuRegistry import SudokuRegistry
+from uuid import UUID
 
 class UserRepository:
   def __init__(self, db: Session):
@@ -25,7 +26,7 @@ class UserRepository:
     self.db.refresh(user)
     return user
 
-  def get_user_by_id(self, user_id: str) -> Optional[User]:
+  def get_user_by_id(self, user_id: UUID) -> Optional[User]:
     return self.db.query(User).filter(User.id == user_id).first()
 
   def get_user_by_firebase_id(self, firebase_id: str) -> Optional[User]:
