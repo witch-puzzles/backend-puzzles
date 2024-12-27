@@ -1,0 +1,3 @@
+from .UserRepository import UserRepository, get_user_repository
+from .SudokuRepository import SudokuRepository, get_sudoku_repository
+from .SudokuRegistryRepository import SudokuRegistryRepository, get_sudoku_registry_repository
