@@ -17,7 +17,7 @@ class SudokuService:
   def populate_sudoku_registry(self, difficulty: int, count: int):
     while count > 0:
       # create sudoku and save it to the database
-      grid = SudokuGrid.generate_unique_puzzle(3, 1)
+      grid = SudokuGrid.generate_unique_puzzle()
       solution = grid.try_solve()
 
       if solution is None:
