@@ -24,9 +24,7 @@ if not _apps:
 app = FastAPI()
 
 origins = [
-  "http://localhost",
-  "http://localhost:8000",
-  # TODO: our domain will be added here when we have it
+  "*",
 ]
 
 app.add_middleware(
