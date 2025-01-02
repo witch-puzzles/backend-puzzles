@@ -2,17 +2,17 @@
 SudokuEntriesRepository.py is a class that contains all the methods that are used to interact with the database, for the SudokuEntries table.
 """
 
-from sqlalchemy.orm import Session
 from typing import Optional, List, Tuple
 from uuid import UUID
 from datetime import datetime
 
-from app.entities.User import User
 from app.entities.Sudoku import Sudoku
 from app.entities.SudokuRegistry import SudokuRegistry
+from app.dependencies.database import database
+
 
 class SudokuRegistryRepository:
-  def __init__(self, db: Session):
+  def __init__(self, db: database):
     self.db = db
 
   def create_sudoku_registry(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> SudokuRegistry:
@@ -79,5 +79,5 @@ class SudokuRegistryRepository:
     return None
 
 
-def get_sudoku_registry_repository(db: Session) -> SudokuRegistryRepository:
+def get_sudoku_registry_repository(db: database) -> SudokuRegistryRepository:
   return SudokuRegistryRepository(db)

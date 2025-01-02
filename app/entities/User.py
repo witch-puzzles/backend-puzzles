@@ -1,11 +1,13 @@
 from sqlalchemy import Column, Integer, String, UniqueConstraint, UUID, DateTime, Float, Boolean
 from app.core.database import Base
 from datetime import datetime
+import uuid
 
 class User(Base):
   __tablename__ = "users"
 
-  id = Column(UUID, primary_key=True, index=True)
+  id = Column(UUID, primary_key=True, index=True, default=uuid.uuid4)
+  username = Column(String, nullable=False)
   firebase_id = Column(String, nullable=False)
   email = Column(String, nullable=False)
   username = Column(String, nullable=False)

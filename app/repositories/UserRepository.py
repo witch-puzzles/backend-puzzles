@@ -1,14 +1,15 @@
 """
 UserRepository.py is a class that contains all the methods that are used to interact with the database, for the User table.
 """
-from sqlalchemy.orm import Session
 from typing import Optional
-
-from app.entities.User import User
 from uuid import UUID
 
+from app.entities.User import User
+from app.dependencies.database import database
+
+
 class UserRepository:
-  def __init__(self, db: Session):
+  def __init__(self, db: database):
     self.db = db
 
   def create_user(self, firebase_id: str, username: str, email: str) -> User:
@@ -35,5 +36,5 @@ class UserRepository:
     self.db.commit()
 
 
-def get_user_repository(db: Session) -> UserRepository:
+def get_user_repository(db: database) -> UserRepository:
   return UserRepository(db)
