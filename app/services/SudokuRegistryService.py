@@ -77,7 +77,16 @@ class SudokuRegistryService:
         is_correct=False,
         message="Solution is incorrect"
       )
-    self.__sudoku_registry_repository.create_sudoku_entry(user_id, sudoku_id, solving_time, is_applicable)
+
+    # if is_applicable & registry places in a better place, send email to user which was placed lower
+    if is_applicable:
+      all_time_leaderboard = self.get_leaderboard_all_time(new_registery.sudoku.difficulty, new_registery.user.firebase_id)
+      if all_time_leaderboard.user_solving_time > solving_time and all_time_leaderboard.user_rank > 19:
+        # find the user which was placed lower, send email
+        pass
+
+    new_registery = self.__sudoku_registry_repository.create_sudoku_registry(user_id, sudoku_id, solving_time, is_applicable)
+
     return SubmitSudokuResponse(
       is_correct=True,
       message="Solution is correct"

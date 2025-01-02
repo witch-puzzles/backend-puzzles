@@ -41,10 +41,10 @@ class SudokuRegistryRepository:
     self.db.delete(sudoku_registry)
     self.db.commit()
 
-  def get_leaderboard(self, difficulty: int, last_time: datetime, limit: int) -> List[SudokuRegistry]:
+  def get_leaderboard(self, difficulty: int, last_time: datetime, limit: int = 20) -> List[SudokuRegistry]:
     return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.created_at > last_time).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
 
-  def get_all_time_leaderboard(self, difficulty: int, limit: int) -> List[SudokuRegistry]:
+  def get_all_time_leaderboard(self, difficulty: int, limit: int = 20) -> List[SudokuRegistry]:
     return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
 
   def get_user_place_in_leaderboard(self, user_id: UUID, difficulty: int, last_time: datetime) -> Optional[Tuple[SudokuRegistry, int]]:
