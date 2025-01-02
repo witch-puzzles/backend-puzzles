@@ -3,7 +3,6 @@ import traceback
 
 from app.schemes.Sudoku import (
   GetSudokuResponse,
-  ValidateSudokuRequest,
   ValidateSudokuResponse,
 )
 from app.entities import Sudoku
