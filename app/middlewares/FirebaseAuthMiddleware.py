@@ -3,7 +3,6 @@ from typing import Optional
 
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import JSONResponse
 from firebase_admin import auth
 
 class FirebaseAuthMiddleware(BaseHTTPMiddleware):

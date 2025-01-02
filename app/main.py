@@ -3,6 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.settings import settings
 
+from app.middlewares import (
+  FirebaseAuthMiddleware,
+)
+
+from app.routers import (
+  user_router,
+  sudoku_router,
+  sudoku_registry_router,
+)
+
 app = FastAPI()
 
 origins = [
@@ -18,6 +28,12 @@ app.add_middleware(
   allow_methods=["*"],
   allow_headers=["*"],
 )
+
+app.add_middleware(FirebaseAuthMiddleware)
+
+app.include_router(user_router)
+app.include_router(sudoku_router)
+app.include_router(sudoku_registry_router)
 
 @app.get(
   "/",
