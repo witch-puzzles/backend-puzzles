@@ -5,16 +5,14 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.entities.User import User
-from app.entities.Sudoku import Sudoku
-from app.entities.SudokuRegistry import SudokuRegistry
 from uuid import UUID
 
 class UserRepository:
   def __init__(self, db: Session):
     self.db = db
 
-  def create_user(self, firebase_id: str) -> User:
-    user = User(firebase_id=firebase_id)
+  def create_user(self, firebase_id: str, username: str) -> User:
+    user = User(firebase_id=firebase_id, username=username)
     self.db.add(user)
     self.db.commit()
     self.db.refresh(user)
@@ -35,6 +33,7 @@ class UserRepository:
   def delete_user(self, user: User) -> None:
     self.db.delete(user)
     self.db.commit()
+
 
 def get_user_repository(db: Session) -> UserRepository:
   return UserRepository(db)

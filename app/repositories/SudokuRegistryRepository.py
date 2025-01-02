@@ -3,8 +3,9 @@ SudokuEntriesRepository.py is a class that contains all the methods that are use
 """
 
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from uuid import UUID
+from datetime import datetime
 
 from app.entities.User import User
 from app.entities.Sudoku import Sudoku
@@ -39,6 +40,31 @@ class SudokuRegistryRepository:
   def delete_sudoku_registry(self, sudoku_registry: SudokuRegistry) -> None:
     self.db.delete(sudoku_registry)
     self.db.commit()
+
+  def get_leaderboard(self, difficulty: int, last_time: datetime, limit: int) -> List[SudokuRegistry]:
+    return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.created_at > last_time).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
+
+  def get_all_time_leaderboard(self, difficulty: int, limit: int) -> List[SudokuRegistry]:
+    return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
+
+  def get_user_place_in_leaderboard(self, user_id: UUID, difficulty: int, last_time: datetime) -> Optional[Tuple[SudokuRegistry, int]]:
+    leaderboard = self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.created_at > last_time).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).all()
+    user_place = 1
+    for entry in leaderboard:
+      if entry.user_id == user_id:
+        return entry, user_place
+      user_place += 1
+    return None
+
+  def get_user_place_in_all_time_leaderboard(self, user_id: UUID, difficulty: int) -> Optional[Tuple[SudokuRegistry, int]]:
+    leaderboard = self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).all()
+    user_place = 1
+    for entry in leaderboard:
+      if entry.user_id == user_id:
+        return entry, user_place
+      user_place += 1
+    return None
+
 
 def get_sudoku_registry_repository(db: Session) -> SudokuRegistryRepository:
   return SudokuRegistryRepository(db)
