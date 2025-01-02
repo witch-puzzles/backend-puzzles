@@ -6,6 +6,7 @@ from typing import Optional, List, Tuple
 from uuid import UUID
 from datetime import datetime
 
+from app.entities.User import User
 from app.entities.Sudoku import Sudoku
 from app.entities.SudokuRegistry import SudokuRegistry
 from app.dependencies.database import database
