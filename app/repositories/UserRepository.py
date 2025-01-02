@@ -12,8 +12,8 @@ class UserRepository:
   def __init__(self, db: database):
     self.db = db
 
-  def create_user(self, firebase_id: str, username: str) -> User:
-    user = User(firebase_id=firebase_id, username=username)
+  def create_user(self, firebase_id: str, username: str, email: str) -> User:
+    user = User(firebase_id=firebase_id, username=username, email=email)
     self.db.add(user)
     self.db.commit()
     self.db.refresh(user)

@@ -9,9 +9,12 @@ class User(Base):
   id = Column(UUID, primary_key=True, index=True, default=uuid.uuid4)
   username = Column(String, nullable=False)
   firebase_id = Column(String, nullable=False)
+  email = Column(String, nullable=False)
+  username = Column(String, nullable=False)
   created_at = Column(DateTime, default=datetime.now())
 
   __table_args__ = (
     UniqueConstraint('firebase_id'),
+    UniqueConstraint('email'),
     UniqueConstraint('username'),
   )

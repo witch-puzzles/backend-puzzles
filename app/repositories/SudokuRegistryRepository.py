@@ -15,7 +15,7 @@ class SudokuRegistryRepository:
   def __init__(self, db: database):
     self.db = db
 
-  def create_sudoku_entry(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> SudokuRegistry:
+  def create_sudoku_registry(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> SudokuRegistry:
     sudoku_registry = SudokuRegistry(user_id=user_id, sudoku_id=sudoku_id, solving_time=solving_time, is_applicable=is_applicable)
     self.db.add(sudoku_registry)
     self.db.commit()
@@ -41,10 +41,10 @@ class SudokuRegistryRepository:
     self.db.delete(sudoku_registry)
     self.db.commit()
 
-  def get_leaderboard(self, difficulty: int, last_time: datetime, limit: int) -> List[SudokuRegistry]:
+  def get_leaderboard(self, difficulty: int, last_time: datetime, limit: int = 20) -> List[SudokuRegistry]:
     return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.created_at > last_time).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
 
-  def get_all_time_leaderboard(self, difficulty: int, limit: int) -> List[SudokuRegistry]:
+  def get_all_time_leaderboard(self, difficulty: int, limit: int = 20) -> List[SudokuRegistry]:
     return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
 
   def get_user_place_in_leaderboard(self, user_id: UUID, difficulty: int, last_time: datetime) -> Optional[Tuple[SudokuRegistry, int]]:
@@ -63,6 +63,19 @@ class SudokuRegistryRepository:
       if entry.user_id == user_id:
         return entry, user_place
       user_place += 1
+    return None
+
+  def get_broken_record_user_if_any(self, difficulty: int, user_id: UUID, solving_time: float, limit: int = 20) -> Optional[User]:
+    """
+    Checks if the given solving time is breaking any records in the leaderboard.
+    If so, returns the user who's record is broken.
+    Checks only the last `limit` entries.
+    Checks if the user is not breaking his own record.
+    """
+    leaderboard = self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
+    for entry in leaderboard:
+      if entry.solving_time > solving_time and entry.user_id != user_id:
+        return entry.user
     return None
 
 

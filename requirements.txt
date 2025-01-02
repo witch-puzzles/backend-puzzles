@@ -20,3 +20,4 @@ starlette==0.41.2
 typing_extensions==4.12.2
 uvicorn==0.32.0
 firebase_admin
+sib_api_v3_sdk

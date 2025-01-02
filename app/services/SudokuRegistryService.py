@@ -9,6 +9,8 @@ from app.repositories.UserRepository import get_user_repository, UserRepository
 from app.dependencies.database import database
 from app.dependencies.sudoku_service import sudoku_service
 from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement, SubmitSudokuResponse
+from app.utils.EmailUtil import EmailUtil
+from app.core.settings import settings
 
 
 class SudokuRegistryService:
@@ -77,7 +79,20 @@ class SudokuRegistryService:
         is_correct=False,
         message="Solution is incorrect"
       )
-    self.__sudoku_registry_repository.create_sudoku_entry(user_id, sudoku_id, solving_time, is_applicable)
+
+    # if is_applicable & registry places in a better place, send email to user which was placed lower
+    if is_applicable:
+      sudoku = self.__sudoku_service.get_sudoku_by_id(sudoku_id)
+      broken_record_user = self.__sudoku_registry_repository.get_broken_record_user_if_any(sudoku.difficulty, user_id, solving_time)
+
+      if broken_record_user:
+        email_to_send = broken_record_user.email
+        html_content = EmailUtil.read_from_html("../assets/new_record/new_record.html")
+        EmailUtil.send_email(email_to_send, settings.MAIL_SENDER, "New Record in Leaderboard!", html_content)
+
+
+    new_registry = self.__sudoku_registry_repository.create_sudoku_registry(user_id, sudoku_id, solving_time, is_applicable)
+
     return SubmitSudokuResponse(
       is_correct=True,
       message="Solution is correct"

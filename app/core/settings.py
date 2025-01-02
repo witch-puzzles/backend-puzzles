@@ -16,4 +16,8 @@ class Settings(BaseSettings):
 
   FIREBASE_AUTH_CREDENTIAL: str = os.environ.get("FIREBASE_AUTH_CREDENTIAL")
 
+  BREVO_API_KEY: str = os.environ.get("BREVO_API_KEY")
+
+  MAIL_SENDER: str = os.environ.get("MAIL_SENDER")
+
 settings = Settings()

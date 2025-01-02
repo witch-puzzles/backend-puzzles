@@ -5,6 +5,7 @@ from typing import Optional
 @dataclass
 class UserCreateRequest:
   username: str
+  email: str
 
 @dataclass
 class UserCreateResponse:
