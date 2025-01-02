@@ -19,7 +19,9 @@ class SubmitSudokuRequest:
   puzzle_id: UUID
   user_solution: str
   solving_time: float
+  is_applicable: bool
 
 @dataclass
 class SubmitSudokuResponse:
+  is_correct: bool
   message: str
