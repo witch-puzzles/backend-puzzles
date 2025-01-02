@@ -1,22 +1,35 @@
 from functools import lru_cache
 
-from repositories.UserRepository import get_user_repository, UserRepository
-from dependencies.database import database
-from schemes.UserCreate import UserCreateResponse
+from app.repositories.UserRepository import get_user_repository, UserRepository
+from app.dependencies.database import database
+from app.schemes.User import UserCreateResponse, UserUpdateResponse
 
 
 class UserService:
   def __init__(self, user_repository: UserRepository):
     self.__user_repository = user_repository
 
-  async def createUser(self, requesterFirebaseAuthId: str) -> UserCreateResponse:
+  async def createUser(self, firebase_id: str, username: str) -> UserCreateResponse:
+    user = self.__user_repository.get_user_by_firebase_id(firebase_id)
+
+    if not user:
+      await self.__user_repository.create_user(firebase_id)
+
+    return UserCreateResponse(message='User created successfully')
+
+  async def updateUser(self, requesterFirebaseAuthId: str, username: str) -> UserCreateResponse:
     user = self.__user_repository.get_user_by_firebase_id(requesterFirebaseAuthId)
 
     if not user:
-      await self.__user_repository.create_user(requesterFirebaseAuthId)
+      raise Exception('User not found')
 
-    return UserCreateResponse(message='User created or updated successfully')
+    if username.strip() == '':
+      raise Exception('Username cannot be empty')
 
+    user.username = username
+    await self.__user_repository.save_user(user)
+
+    return UserUpdateResponse(message='User updated successfully')
 
 @lru_cache
 def get_user_service() -> UserService:
