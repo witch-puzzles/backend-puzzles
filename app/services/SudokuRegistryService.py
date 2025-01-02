@@ -9,8 +9,8 @@ from app.repositories.UserRepository import get_user_repository, UserRepository
 from app.dependencies.database import database
 from app.dependencies.sudoku_service import sudoku_service
 from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement, SubmitSudokuResponse
-from app.utils import EmailUtil
-from app.core import settings
+from app.utils.EmailUtil import EmailUtil
+from app.core.settings import settings
 
 
 class SudokuRegistryService:

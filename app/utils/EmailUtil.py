@@ -1,4 +1,4 @@
-from app.core import settings
+from app.core.settings import settings
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 
