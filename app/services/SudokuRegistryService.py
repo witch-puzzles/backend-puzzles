@@ -9,6 +9,8 @@ from app.repositories.UserRepository import get_user_repository, UserRepository
 from app.dependencies.database import database
 from app.dependencies.sudoku_service import sudoku_service
 from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement, SubmitSudokuResponse
+from app.utils import EmailUtil
+from app.core import settings
 
 
 class SudokuRegistryService:
@@ -85,9 +87,11 @@ class SudokuRegistryService:
 
       if broken_record_user:
         email_to_send = broken_record_user.email
-        # TODO: send email to the user
+        html_content = EmailUtil.read_from_html("../assets/new_record/new_record.html")
+        EmailUtil.send_email(email_to_send, settings.MAIL_SENDER, "New Record in Leaderboard!", html_content)
 
-    new_registery = self.__sudoku_registry_repository.create_sudoku_registry(user_id, sudoku_id, solving_time, is_applicable)
+
+    new_registry = self.__sudoku_registry_repository.create_sudoku_registry(user_id, sudoku_id, solving_time, is_applicable)
 
     return SubmitSudokuResponse(
       is_correct=True,
