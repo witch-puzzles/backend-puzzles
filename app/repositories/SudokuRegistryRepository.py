@@ -65,6 +65,19 @@ class SudokuRegistryRepository:
       user_place += 1
     return None
 
+  def get_broken_record_user_if_any(self, difficulty: int, user_id: UUID, solving_time: float, limit: int = 20) -> Optional[User]:
+    """
+    Checks if the given solving time is breaking any records in the leaderboard.
+    If so, returns the user who's record is broken.
+    Checks only the last `limit` entries.
+    Checks if the user is not breaking his own record.
+    """
+    leaderboard = self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
+    for entry in leaderboard:
+      if entry.solving_time > solving_time and entry.user_id != user_id:
+        return entry.user
+    return None
+
 
 def get_sudoku_registry_repository(db: Session) -> SudokuRegistryRepository:
   return SudokuRegistryRepository(db)

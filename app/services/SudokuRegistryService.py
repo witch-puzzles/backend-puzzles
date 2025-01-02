@@ -80,10 +80,12 @@ class SudokuRegistryService:
 
     # if is_applicable & registry places in a better place, send email to user which was placed lower
     if is_applicable:
-      all_time_leaderboard = self.get_leaderboard_all_time(new_registery.sudoku.difficulty, new_registery.user.firebase_id)
-      if all_time_leaderboard.user_solving_time > solving_time and all_time_leaderboard.user_rank > 19:
-        # find the user which was placed lower, send email
-        pass
+      sudoku = self.__sudoku_service.get_sudoku_by_id(sudoku_id)
+      broken_record_user = self.__sudoku_registry_repository.get_broken_record_user_if_any(sudoku.difficulty, user_id, solving_time)
+
+      if broken_record_user:
+        email_to_send = broken_record_user.email
+        # TODO: send email to the user
 
     new_registery = self.__sudoku_registry_repository.create_sudoku_registry(user_id, sudoku_id, solving_time, is_applicable)
 
