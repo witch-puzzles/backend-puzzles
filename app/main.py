@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from firebase_admin import initialize_app, _apps
+from firebase_admin import credentials
 
 from app.core.settings import settings
 
@@ -12,6 +14,10 @@ from app.routers import (
   sudoku_router,
   sudoku_registry_router,
 )
+
+cred = credentials.Certificate(settings.FIREBASE_AUTH_CREDENTIAL_PATH)
+if not _apps:
+  initialize_app(cred)
 
 app = FastAPI()
 
