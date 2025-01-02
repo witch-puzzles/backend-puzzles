@@ -27,9 +27,11 @@ async def createUser(
   try:
     firebase_user_id = request.state.firebase_user_id
     username = user_create_request.username
+    email = user_create_request.email
     return await user_service.createUser(
       firebase_user_id,
       username,
+      email,
     )
   except Exception as e:
     traceback.print_exc()

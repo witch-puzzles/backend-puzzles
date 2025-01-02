@@ -9,11 +9,11 @@ class UserService:
   def __init__(self, user_repository: UserRepository):
     self.__user_repository = user_repository
 
-  async def createUser(self, firebase_id: str, username: str) -> UserCreateResponse:
+  async def createUser(self, firebase_id: str, username: str, email: str) -> UserCreateResponse:
     user = self.__user_repository.get_user_by_firebase_id(firebase_id)
 
     if not user:
-      await self.__user_repository.create_user(firebase_id)
+      await self.__user_repository.create_user(firebase_id, username, email)
 
     return UserCreateResponse(message='User created successfully')
 
