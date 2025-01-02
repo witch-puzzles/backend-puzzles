@@ -15,7 +15,7 @@ class SudokuRegistryRepository:
   def __init__(self, db: Session):
     self.db = db
 
-  def create_sudoku_entry(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> SudokuRegistry:
+  def create_sudoku_registry(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> SudokuRegistry:
     sudoku_registry = SudokuRegistry(user_id=user_id, sudoku_id=sudoku_id, solving_time=solving_time, is_applicable=is_applicable)
     self.db.add(sudoku_registry)
     self.db.commit()
