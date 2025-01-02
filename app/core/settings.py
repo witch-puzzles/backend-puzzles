@@ -14,6 +14,6 @@ class Settings(BaseSettings):
   LOCK_DB_WRITE: bool = os.environ.get("LOCK_DB_WRITE", 0) == 1
   PORT: int = os.environ.get("PORT", 4040)
 
-  FIREBASE_AUTH_CREDENTIAL_PATH: str = os.environ.get("FIREBASE_AUTH_CREDENTIAL_PATH")
+  FIREBASE_AUTH_CREDENTIAL: str = os.environ.get("FIREBASE_AUTH_CREDENTIAL")
 
 settings = Settings()
