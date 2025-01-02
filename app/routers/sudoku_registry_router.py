@@ -73,8 +73,9 @@ async def submit_sudoku(request: Request, submit_sudoku_request: SubmitSudokuReq
     user_id = request.state.user_id
     sudoku_id = submit_sudoku_request.puzzle_id
     solving_time = submit_sudoku_request.solving_time
-    sudoku_registry_service.submit_sudoku(user_id, sudoku_id, solving_time)
-    return SubmitSudokuResponse(message="Sudoku submitted successfully")
+    is_applicable = submit_sudoku_request.is_applicable
+    user_solution = submit_sudoku_request.user_solution
+    return sudoku_registry_service.submit_sudoku(user_id, sudoku_id, solving_time, is_applicable, user_solution)
   except Exception as e:
     traceback.print_exc()
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
