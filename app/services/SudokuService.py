@@ -1,4 +1,5 @@
 from functools import lru_cache
+from uuid import UUID
 
 from app.repositories.SudokuRepository import get_sudoku_repository, SudokuRepository
 from app.dependencies.database import database
@@ -11,7 +12,7 @@ class SudokuService:
   def get_random_sudoku_by_difficulty(self, difficulty: int):
     return self.__sudoku_repository.get_random_sudoku_by_difficulty(difficulty)
 
-  def get_sudoku_by_id(self, sudoku_id: str):
+  def get_sudoku_by_id(self, sudoku_id: UUID):
     return self.__sudoku_repository.get_sudoku_by_id(sudoku_id)
 
   def populate_sudoku_registry(self, difficulty: int, count: int):

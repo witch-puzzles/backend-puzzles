@@ -6,11 +6,7 @@ from uuid import UUID
 class GetSudokuResponse:
   puzzle_id: UUID
   puzzle_data: str
-
-@dataclass
-class ValidateSudokuRequest:
-  puzzle_id: UUID
-  user_solution: str
+  difficulty: int
 
 @dataclass
 class ValidateSudokuResponse:

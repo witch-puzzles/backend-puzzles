@@ -7,13 +7,15 @@ from app.repositories.SudokuRegistryRepository import get_sudoku_registry_reposi
 from app.repositories.UserRepository import get_user_repository, UserRepository
 
 from app.dependencies.database import database
-from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement
+from app.dependencies.sudoku_service import sudoku_service
+from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement, SubmitSudokuResponse
 
 
 class SudokuRegistryService:
-  def __init__(self, sudoku_registry_repository: SudokuRegistryRepository, user_repository: UserRepository):
+  def __init__(self, sudoku_registry_repository: SudokuRegistryRepository, user_repository: UserRepository, sudoku_service: sudoku_service):
     self.__sudoku_registry_repository = sudoku_registry_repository
     self.__user_repository = user_repository
+    self.__sudoku_service = sudoku_service
 
   def get_leaderboard_today(self, difficulty: int, firebase_user_id: str) -> SudokuLeaderboardResponse:
     beginning_of_today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
@@ -68,14 +70,25 @@ class SudokuRegistryService:
       user_solving_time=user_solving_time
     )
 
-  def submit_sudoku(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool) -> None:
+  def submit_sudoku(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool, user_solution: str) -> SubmitSudokuResponse:
+    is_solution_correct = self.__sudoku_service.validate_sudoku(sudoku_id, user_solution)
+    if not is_solution_correct:
+      return SubmitSudokuResponse(
+        is_correct=False,
+        message="Solution is incorrect"
+      )
     self.__sudoku_registry_repository.create_sudoku_entry(user_id, sudoku_id, solving_time, is_applicable)
+    return SubmitSudokuResponse(
+      is_correct=True,
+      message="Solution is correct"
+    )
 
 
 @lru_cache
-def get_sudoku_registry_service(database: database) -> SudokuRegistryService:
+def get_sudoku_registry_service(database: database, sudoku_service: sudoku_service) -> SudokuRegistryService:
   """Returns a cached instance of SudokuRegistryService."""
   return SudokuRegistryService(
     get_sudoku_registry_repository(database),
     get_user_repository(database),
+    sudoku_service,
   )
