@@ -18,16 +18,18 @@ class TestSudokuGrid(unittest.TestCase):
         empty = 40
         grid = SudokuGrid.generate_non_unique_puzzle(block_size, empty)
 
-        # Ensure that the grid is not solved after generation
+        # Ensure that the grid is not solved but is valid after generation
         self.assertEqual(grid.is_solved(), False)
+        self.assertEqual(grid.is_solved(True), True)
 
     def test_generate_unique_puzzle(self):
         # Test the generate_unique_puzzle method
         block_size = 3
         grid = SudokuGrid.generate_unique_puzzle(block_size)
 
-        # Ensure that the grid has a unique solution
+        # Ensure that the grid is not solved but is valid after generation
         self.assertEqual(grid.is_solved(), False)
+        self.assertEqual(grid.is_solved(True), True)
 
     def test_generate_empty_cells(self):
         # Test generate_empty_cells method
@@ -77,7 +79,7 @@ class TestSudokuGrid(unittest.TestCase):
 
     def test_generate_candidates(self):
         # Test generate_candidates method
-        grid = SudokuGrid.generate_filled(3)
+        grid = SudokuGrid.generate_non_unique_puzzle(3)
         grid.generate_candidates()
 
         # Ensure that candidates are generated
@@ -112,10 +114,12 @@ class TestSudokuGrid(unittest.TestCase):
     def test_is_available(self):
         # Test _is_available method
         grid = SudokuGrid.generate_filled(3)
+        initial = grid.array[0, 0]
         grid.array[0, 0] = 0  # Make one cell empty
+        grid.generate_candidates()
 
         # Check availability of number 5 in the empty cell (0, 0)
-        is_available = grid._is_available((0, 0), 5)
+        is_available = grid._is_available((0, 0), initial)
 
         # Since it's an empty grid and the number is not used in the same row, column, or block
         self.assertTrue(is_available)
