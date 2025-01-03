@@ -57,3 +57,17 @@ async def updateUser(
   except Exception as e:
     traceback.print_exc()
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.get(
+  "/amiadmin"
+)
+async def am_i_admin(
+  request: Request,
+  user_service: user_service
+):
+  try:
+    firebase_user_id = request.state.firebase_user_id
+    return user_service.am_i_admin(firebase_user_id)
+  except Exception as e:
+    traceback.print_exc()
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

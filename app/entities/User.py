@@ -11,6 +11,7 @@ class User(Base):
   firebase_id = Column(String, nullable=False)
   email = Column(String, nullable=False)
   username = Column(String, nullable=False)
+  role = Column(Integer, nullable=False, default=0)
   created_at = Column(DateTime, default=datetime.now())
 
   __table_args__ = (

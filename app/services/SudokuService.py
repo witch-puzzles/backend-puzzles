@@ -2,12 +2,14 @@ from functools import lru_cache
 from uuid import UUID
 
 from app.repositories.SudokuRepository import get_sudoku_repository, SudokuRepository
+from app.dependencies.user_service import user_service
 from app.dependencies.database import database
 from app.libs.sudoku_grid import SudokuGrid
 
 class SudokuService:
-  def __init__(self, sudoku_repository: SudokuRepository):
+  def __init__(self, sudoku_repository: SudokuRepository, user_service: user_service):
     self.__sudoku_repository = sudoku_repository
+    self.__user_service = user_service
 
   def get_random_sudoku_by_difficulty(self, difficulty: int):
     return self.__sudoku_repository.get_random_sudoku_by_difficulty(difficulty)
@@ -15,7 +17,13 @@ class SudokuService:
   def get_sudoku_by_id(self, sudoku_id: UUID):
     return self.__sudoku_repository.get_sudoku_by_id(sudoku_id)
 
-  def populate_sudoku_registry(self, difficulty: int, count: int):
+  def populate_sudoku_registry(self, difficulty: int, count: int, firebase_user_id: str):
+    user = self.__user_service.__user_repository.get_user_by_firebase_id(firebase_user_id)
+    if user is None:
+      raise Exception("User not found")
+    if self.__user_service.am_i_admin(firebase_user_id) is False:
+      raise Exception("Access denied")
+
     while count > 0:
       # create sudoku and save it to the database
       grid = SudokuGrid.generate_unique_puzzle()
@@ -58,4 +66,4 @@ class SudokuService:
 @lru_cache
 def get_sudoku_service() -> SudokuService:
   """Returns a cached instance of SudokuService."""
-  return SudokuService(get_sudoku_repository(database))
+  return SudokuService(get_sudoku_repository(database), user_service)

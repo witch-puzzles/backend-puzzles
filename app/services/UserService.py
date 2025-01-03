@@ -26,10 +26,21 @@ class UserService:
     if username.strip() == '':
       raise Exception('Username cannot be empty')
 
+    if self.__user_repository.is_username_taken(username):
+      raise Exception('Username is already taken')
+
     user.username = username
     await self.__user_repository.save_user(user)
 
     return UserUpdateResponse(message='User updated successfully')
+
+  def am_i_admin(self, firebase_user_id: str) -> bool:
+    user = self.__user_repository.get_user_by_firebase_id(firebase_user_id)
+
+    if not user:
+      raise Exception('User not found')
+
+    return user.role == 1
 
 @lru_cache
 def get_user_service() -> UserService:
