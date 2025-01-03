@@ -2,6 +2,7 @@ from functools import lru_cache
 from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
+import os
 
 from app.repositories.SudokuRegistryRepository import get_sudoku_registry_repository, SudokuRegistryRepository
 from app.repositories.UserRepository import get_user_repository, UserRepository
@@ -91,7 +92,11 @@ class SudokuRegistryService:
 
       if broken_record_user:
         email_to_send = broken_record_user.email
-        html_content = EmailUtil.read_from_html("../assets/new_record/new_record.html")
+        current_dir = os.path.dirname(__file__)
+        parent_dir = os.path.dirname(current_dir)
+        template_path = os.path.join(parent_dir, "assets/new_record/new_record.html")
+
+        html_content = EmailUtil.read_from_html(template_path)
         EmailUtil.send_email(email_to_send, settings.MAIL_SENDER, "New Record in Leaderboard!", html_content)
 
 
