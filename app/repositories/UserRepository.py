@@ -35,6 +35,9 @@ class UserRepository:
     self.db.delete(user)
     self.db.commit()
 
+  def is_username_taken(self, username: str) -> bool:
+    return self.db.query(User).filter(User.username == username).first() is not None
+
 
 def get_user_repository(db: database) -> UserRepository:
   return UserRepository(db)
