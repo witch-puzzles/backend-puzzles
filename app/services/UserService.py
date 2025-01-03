@@ -1,5 +1,7 @@
 from functools import lru_cache
 
+from app.entities.User import User
+
 from app.repositories.UserRepository import get_user_repository, UserRepository
 from app.dependencies.database import database
 from app.schemes.User import UserCreateResponse, UserUpdateResponse
@@ -8,6 +10,14 @@ from app.schemes.User import UserCreateResponse, UserUpdateResponse
 class UserService:
   def __init__(self, user_repository: UserRepository):
     self.__user_repository = user_repository
+
+  def getUserByFirebaseId(self, firebase_id: str) -> User:
+    user = self.__user_repository.get_user_by_firebase_id(firebase_id)
+
+    if not user:
+      raise Exception('User not found')
+
+    return user
 
   async def createUser(self, firebase_id: str, username: str, email: str) -> UserCreateResponse:
     user = self.__user_repository.get_user_by_firebase_id(firebase_id)
@@ -18,10 +28,7 @@ class UserService:
     return UserCreateResponse(message='User created successfully')
 
   async def updateUser(self, requesterFirebaseAuthId: str, username: str) -> UserCreateResponse:
-    user = self.__user_repository.get_user_by_firebase_id(requesterFirebaseAuthId)
-
-    if not user:
-      raise Exception('User not found')
+    user = self.getUserByFirebaseId(requesterFirebaseAuthId)
 
     if username.strip() == '':
       raise Exception('Username cannot be empty')
@@ -36,9 +43,6 @@ class UserService:
 
   def am_i_admin(self, firebase_user_id: str) -> bool:
     user = self.__user_repository.get_user_by_firebase_id(firebase_user_id)
-
-    if not user:
-      raise Exception('User not found')
 
     return user.role == 1
 

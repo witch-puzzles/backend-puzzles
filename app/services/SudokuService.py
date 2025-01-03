@@ -18,7 +18,7 @@ class SudokuService:
     return self.__sudoku_repository.get_sudoku_by_id(sudoku_id)
 
   def populate_sudoku_registry(self, difficulty: int, count: int, firebase_user_id: str):
-    user = self.__user_service.__user_repository.get_user_by_firebase_id(firebase_user_id)
+    user = self.__user_service.getUserByFirebaseId(firebase_user_id)
     if user is None:
       raise Exception("User not found")
     if self.__user_service.am_i_admin(firebase_user_id) is False:
