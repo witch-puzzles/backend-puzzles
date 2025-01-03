@@ -11,6 +11,8 @@ from app.entities.Sudoku import Sudoku
 from app.entities.SudokuRegistry import SudokuRegistry
 from app.dependencies.database import database
 
+from app.schemes.SudokuLeaderboard import UserRecordsElement
+
 
 class SudokuRegistryRepository:
   def __init__(self, db: database):
@@ -79,8 +81,16 @@ class SudokuRegistryRepository:
         return entry.user
     return None
 
-  def get_user_records(self, user_id: UUID, difficulty: int, limit: int = 20) -> List[SudokuRegistry]:
-    return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.user_id == user_id).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
+  def get_user_records(self, user_id: UUID, difficulty: int, limit: int = 20) -> List[UserRecordsElement]:
+    user_records = self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.user_id == user_id).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
+    records = []
+    for entry in user_records:
+      records.append(UserRecordsElement(
+        puzzle_id=entry.sudoku_id,
+        solving_time=entry.solving_time
+      ))
+    return records
+
 
 def get_sudoku_registry_repository(db: database) -> SudokuRegistryRepository:
   return SudokuRegistryRepository(db)

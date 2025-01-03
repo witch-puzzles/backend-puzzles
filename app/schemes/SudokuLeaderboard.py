@@ -25,3 +25,12 @@ class SubmitSudokuRequest:
 class SubmitSudokuResponse:
   is_correct: bool
   message: str
+
+@dataclass
+class UserRecordsElement:
+  puzzle_id: UUID
+  solving_time: float
+
+@dataclass
+class UserRecordsResponse:
+  records: list[UserRecordsElement]
