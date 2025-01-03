@@ -13,7 +13,7 @@ class UserService:
     user = self.__user_repository.get_user_by_firebase_id(firebase_id)
 
     if not user:
-      await self.__user_repository.create_user(firebase_id, username, email)
+      self.__user_repository.create_user(firebase_id, username, email)
 
     return UserCreateResponse(message='User created successfully')
 
