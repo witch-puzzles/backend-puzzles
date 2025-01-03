@@ -26,7 +26,7 @@ class SudokuRegistryService:
 
   def get_leaderboard_week(self, difficulty: int, firebase_user_id: str) -> SudokuLeaderboardResponse:
     beginning_of_week = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-    beginning_of_week = beginning_of_week.replace(day=beginning_of_week.day - beginning_of_week.weekday())
+    beginning_of_week = beginning_of_week.replace(day=beginning_of_week.day - min(beginning_of_week.weekday(), beginning_of_week.day - 1))
     return self.get_leaderboard(difficulty, firebase_user_id, beginning_of_week)
 
   def get_leaderboard_month(self, difficulty: int, firebase_user_id: str) -> SudokuLeaderboardResponse:
@@ -49,7 +49,7 @@ class SudokuRegistryService:
       leaderboard_data = self.__sudoku_registry_repository.get_leaderboard(difficulty, beginning_time)
   
     leaderboard = []
-    user_rank = -1
+    user_rank = 1
     user_solving_time = -1
     for entry in leaderboard_data:
       if entry.user_id == user_id:
@@ -62,7 +62,7 @@ class SudokuRegistryService:
       user_rank += 1
 
     if user_solving_time < 0:
-      user_leaderboard_elemet = self.__sudoku_registry_repository.get_user_place_in_leaderboard(user_id, difficulty, beginning_time)
+      user_leaderboard_elemet = self.__sudoku_registry_repository.get_user_place_in_all_time_leaderboard(user_id, difficulty)
       if user_leaderboard_elemet:
         user_solving_time = user_leaderboard_elemet[0].solving_time
         user_rank = user_leaderboard_elemet[1]
