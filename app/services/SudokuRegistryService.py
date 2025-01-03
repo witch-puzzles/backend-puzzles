@@ -72,7 +72,11 @@ class SudokuRegistryService:
       user_solving_time=user_solving_time
     )
 
-  def submit_sudoku(self, user_id: UUID, sudoku_id: UUID, solving_time: float, is_applicable: bool, user_solution: str) -> SubmitSudokuResponse:
+  def submit_sudoku(self, firebase_user_id: str, sudoku_id: UUID, solving_time: float, is_applicable: bool, user_solution: str) -> SubmitSudokuResponse:
+    user = self.__user_repository.get_user_by_firebase_id(firebase_user_id)
+    if not user:
+      raise Exception("User not found")
+    user_id = user.id
     is_solution_correct = self.__sudoku_service.validate_sudoku(sudoku_id, user_solution)
     if not is_solution_correct:
       return SubmitSudokuResponse(
