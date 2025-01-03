@@ -25,7 +25,7 @@ async def get_leaderboard_today(request: Request, difficulty: int, sudoku_regist
     firebase_user_id = request.state.firebase_user_id
     if firebase_user_id is None:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User is not authenticated")
-    return await sudoku_registry_service.get_leaderboard_today(difficulty, firebase_user_id)
+    return sudoku_registry_service.get_leaderboard_today(difficulty, firebase_user_id)
   except Exception as e:
     traceback.print_exc()
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -40,7 +40,7 @@ async def get_leaderboard_week(request: Request, difficulty: int, sudoku_registr
     firebase_user_id = request.state.firebase_user_id
     if firebase_user_id is None:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User is not authenticated")
-    return await sudoku_registry_service.get_leaderboard_week(difficulty, firebase_user_id)
+    return sudoku_registry_service.get_leaderboard_week(difficulty, firebase_user_id)
   except Exception as e:
     traceback.print_exc()
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -55,7 +55,7 @@ async def get_leaderboard_month(request: Request, difficulty: int, sudoku_regist
     firebase_user_id = request.state.firebase_user_id
     if firebase_user_id is None:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User is not authenticated")
-    return await sudoku_registry_service.get_leaderboard_month(difficulty, firebase_user_id)
+    return sudoku_registry_service.get_leaderboard_month(difficulty, firebase_user_id)
   except Exception as e:
     traceback.print_exc()
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -70,7 +70,7 @@ async def get_leaderboard_all_time(request: Request, difficulty: int, sudoku_reg
     firebase_user_id = request.state.firebase_user_id
     if firebase_user_id is None:
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User is not authenticated")
-    return await sudoku_registry_service.get_leaderboard_all_time(difficulty, firebase_user_id)
+    return sudoku_registry_service.get_leaderboard_all_time(difficulty, firebase_user_id)
   except Exception as e:
     traceback.print_exc()
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
