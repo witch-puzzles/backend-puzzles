@@ -79,6 +79,8 @@ class SudokuRegistryRepository:
         return entry.user
     return None
 
+  def get_user_records(self, user_id: UUID, difficulty: int, limit: int = 20) -> List[SudokuRegistry]:
+    return self.db.query(SudokuRegistry).join(Sudoku).filter(Sudoku.difficulty == difficulty).filter(SudokuRegistry.user_id == user_id).filter(SudokuRegistry.is_applicable == True).order_by(SudokuRegistry.solving_time).limit(limit).all()
 
 def get_sudoku_registry_repository(db: database) -> SudokuRegistryRepository:
   return SudokuRegistryRepository(db)
