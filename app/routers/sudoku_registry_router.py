@@ -76,6 +76,21 @@ async def get_leaderboard_all_time(request: Request, difficulty: int, sudoku_reg
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
+@router.get(
+  "/records/{difficulty}",
+  response_model=SudokuLeaderboardResponse,
+)
+async def get_user_records(request: Request, difficulty: int, sudoku_registry_service: sudoku_registry_service):
+  try:
+    firebase_user_id = request.state.firebase_user_id
+    if firebase_user_id is None:
+      raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User is not authenticated")
+    return sudoku_registry_service.get_user_records(firebase_user_id, difficulty)
+  except Exception as e:
+    traceback.print_exc()
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
 @router.post(
   "/submit",
   response_model=SubmitSudokuResponse,
