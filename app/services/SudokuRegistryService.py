@@ -9,7 +9,7 @@ from app.repositories.UserRepository import get_user_repository, UserRepository
 
 from app.dependencies.database import database
 from app.dependencies.sudoku_service import sudoku_service
-from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement, SubmitSudokuResponse
+from app.schemes.SudokuLeaderboard import SudokuLeaderboardResponse, SudokuLeaderboardElement, SubmitSudokuResponse, UserRecordsResponse, UserRecordsElement
 from app.utils.EmailUtil import EmailUtil
 from app.core.settings import settings
 
@@ -73,25 +73,16 @@ class SudokuRegistryService:
       user_solving_time=user_solving_time
     )
 
-  def get_user_records(self, firebase_user_id: str, difficulty: int) -> SudokuLeaderboardResponse:
+  def get_user_records(self, firebase_user_id: str, difficulty: int) -> UserRecordsResponse:
     user = self.__user_repository.get_user_by_firebase_id(firebase_user_id)
     if not user:
       raise Exception("User not found")
     user_id = user.id
 
     user_records = self.__sudoku_registry_repository.get_user_records(user_id, difficulty)
-    leaderboard = []
-    for entry in user_records:
-      leaderboard.append(SudokuLeaderboardElement(
-        user_name=entry.user.username,
-        rank=-1,
-        solving_time=entry.solving_time,
-      ))
 
-    return SudokuLeaderboardResponse(
-      leaderboard=leaderboard,
-      user_rank=leaderboard[0].rank,
-      user_solving_time=leaderboard[0].solving_time,
+    return UserRecordsResponse(
+      records=user_records
     )
 
 

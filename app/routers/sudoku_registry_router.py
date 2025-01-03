@@ -5,6 +5,7 @@ from app.schemes.SudokuLeaderboard import (
   SudokuLeaderboardResponse,
   SubmitSudokuRequest,
   SubmitSudokuResponse,
+  UserRecordsResponse,
 )
 from app.entities import Sudoku
 from app.dependencies.sudoku_registry_service import sudoku_registry_service
@@ -78,7 +79,7 @@ async def get_leaderboard_all_time(request: Request, difficulty: int, sudoku_reg
 
 @router.get(
   "/records/{difficulty}",
-  response_model=SudokuLeaderboardResponse,
+  response_model=UserRecordsResponse,
 )
 async def get_user_records(request: Request, difficulty: int, sudoku_registry_service: sudoku_registry_service):
   try:
