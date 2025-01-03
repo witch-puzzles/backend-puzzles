@@ -92,7 +92,7 @@ class SudokuRegistryService:
       raise Exception("User not found")
     user_id = user.id
     is_solution_correct = self.__sudoku_service.validate_sudoku(sudoku_id, user_solution)
-    if not is_solution_correct:
+    if not is_solution_correct and settings.DEVELOPMENT == False:
       return SubmitSudokuResponse(
         is_correct=False,
         message="Solution is incorrect"
@@ -103,7 +103,7 @@ class SudokuRegistryService:
       sudoku = self.__sudoku_service.get_sudoku_by_id(sudoku_id)
       broken_record_user = self.__sudoku_registry_repository.get_broken_record_user_if_any(sudoku.difficulty, user_id, solving_time)
 
-      if broken_record_user:
+      if broken_record_user and settings.DEVELOPMENT == False:
         email_to_send = broken_record_user.email
         current_dir = os.path.dirname(__file__)
         parent_dir = os.path.dirname(current_dir)
