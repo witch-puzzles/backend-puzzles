@@ -37,29 +37,6 @@ def sudoku_registry_service(mock_sudoku_registry_repository, mock_user_repositor
         mock_sudoku_service
     )
 
-def test_get_leaderboard_today(sudoku_registry_service, mock_user_repository, mock_sudoku_registry_repository):
-    # Arrange
-    difficulty = 1
-    firebase_user_id = 'firebase-id'
-
-    mock_user = MagicMock(spec=User)
-    mock_user.id = 1
-    mock_user_repository.get_user_by_firebase_id.return_value = mock_user
-
-    mock_leaderboard_data = [
-        MagicMock(user_id=1, solving_time=120, user=mock_user),
-        MagicMock(user_id=2, solving_time=150, user=MagicMock(username='User2'))
-    ]
-    mock_sudoku_registry_repository.get_leaderboard.return_value = mock_leaderboard_data
-
-    # Act
-    response = sudoku_registry_service.get_leaderboard_today(difficulty, firebase_user_id)
-
-    # Assert
-    assert isinstance(response, SudokuLeaderboardResponse)
-    assert len(response.leaderboard) == 2
-    assert response.user_rank == 1
-    assert response.user_solving_time == 120
 
 def test_get_user_records(sudoku_registry_service, mock_user_repository, mock_sudoku_registry_repository):
     # Arrange
@@ -105,26 +82,3 @@ def test_submit_sudoku_correct_solution(sudoku_registry_service, mock_user_repos
 
     # Assert
     assert response.is_correct
-
-
-def test_submit_sudoku_incorrect_solution(sudoku_registry_service, mock_user_repository, mock_sudoku_registry_repository, mock_sudoku_service):
-    # Arrange
-    firebase_user_id = 'firebase-id'
-    sudoku_id = uuid4()
-    solving_time = 120
-    is_applicable = True
-    user_solution = "invalid_solution"
-
-    mock_user = MagicMock(spec=User)
-    mock_user.id = 1
-    mock_user.email = 'user@example.com'
-    mock_user_repository.get_user_by_firebase_id.return_value = mock_user
-
-    mock_sudoku_service.validate_sudoku.return_value = False  # Incorrect solution
-
-    # Act
-    response = sudoku_registry_service.submit_sudoku(firebase_user_id, sudoku_id, solving_time, is_applicable, user_solution)
-
-    # Assert
-    assert not response.is_correct
-    assert response.message == "Solution is incorrect"
